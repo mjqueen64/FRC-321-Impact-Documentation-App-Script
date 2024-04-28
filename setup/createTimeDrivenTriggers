@@ -1,0 +1,8 @@
+function createTimeDrivenTriggers() {
+  // Trigger every Monday at 09:00.
+  ScriptApp.newTrigger('eventNamesToForm')
+      .timeBased()
+      .atHour(0)
+      .everyHours(24)
+      .create();
+}
