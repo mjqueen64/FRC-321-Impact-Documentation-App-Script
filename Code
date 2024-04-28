@@ -1,0 +1,84 @@
+function createTimeDrivenTriggers() {
+  // Trigger every Monday at 09:00.
+  ScriptApp.newTrigger('eventNamesToForm')
+      .timeBased()
+      .atHour(0)
+      .everyHours(24)
+      .create();
+}
+
+function eventNamesToForm() {
+  var form = FormApp.openById("1FvAQ8yf6W1_eetuGZWw4ruR15gKTwTaLz2rbCP1T0j4");
+  var namesList = form.getItemById("566795009").asListItem();
+
+  // identify the sheet where the data resides needed to populate the drop-down
+  var ss = SpreadsheetApp.getActive();
+  var names = ss.getSheetByName("EventList");
+
+  // grab the values in the first column of the sheet - use 2 to skip header row
+  var namesValues = names.getRange(2, 1, names.getMaxRows() - 1, 2).getValues();
+  var eventArray = [];
+  var dateToday = new Date();
+  var tempDate = new Date();
+  var dateFrom = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) 
+
+
+  // convert the array ignoring empty cell
+  // iterate through items in namesValues, removing any row without an event name (empty cell)
+  for (var i = 0; i < namesValues.length; i++)
+    // filter out blank rows, return as eventArray
+    var eventArray = namesValues.filter(function filterNames(name){
+      return name[1] != '';
+    });
+
+  // returns events with dates in the last 7 days
+  var filteredEvents = eventArray.filter(function (row) {
+    var dateVal = new Date(row[0]);
+    return dateVal <= dateToday && dateVal >= dateFrom;
+  });
+
+  // removes dates before sending to sheet
+  var finalNames = filteredEvents.map(function(value, index) {return value[1]; });
+  console.log(finalNames);
+
+  // populate the drop-down with the array data
+  Logger.log(filteredEvents)
+  namesList.setChoiceValues(finalNames);
+}
+
+function teamNamesToForm() {
+  var form = FormApp.openById("1FvAQ8yf6W1_eetuGZWw4ruR15gKTwTaLz2rbCP1T0j4");
+  var namesList = form.getItemById("257701280").asListItem();
+
+  // identify the sheet where the data resides needed to populate the drop-down
+  var ss = SpreadsheetApp.getActive();
+  var names = ss.getSheetByName("TeamList");
+
+  // grab the values in the first column of the sheet - use 2 to skip header row
+  var namesValues = names.getRange(2, 1, names.getMaxRows() - 1, 2).getValues();
+  var teamArray = [];
+
+
+  // convert the array ignoring empty cell
+  // iterate through items in namesValues, removing any row without a team name (empty cell)
+  for (var i = 0; i < namesValues.length; i++)
+    // filter out blank rows, return as teamArray
+    var teamArray = namesValues.filter(function filterNames(name){
+      return name[0] != '';
+    });
+
+  // removes dates before sending to sheet
+  var finalTeams = teamArray.map(function(value, index) {return value[0]; });
+  console.log(finalTeams);
+
+  // populate the drop-down with the array data
+  Logger.log(finalTeams)
+  namesList.setChoiceValues(finalTeams);
+}
+
+
+function getItemID() {
+  var form = FormApp.openById("1FvAQ8yf6W1_eetuGZWw4ruR15gKTwTaLz2rbCP1T0j4");
+  var namesList = form.getItems(FormApp.ItemType.LIST);
+  console.log(namesList[1].getId());
+}
