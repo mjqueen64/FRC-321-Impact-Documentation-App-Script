@@ -1,0 +1,5 @@
+function getItemID() {
+  var form = FormApp.openById("1FvAQ8yf6W1_eetuGZWw4ruR15gKTwTaLz2rbCP1T0j4");
+  var namesList = form.getItems(FormApp.ItemType.LIST);
+  console.log(namesList[1].getId());
+}
