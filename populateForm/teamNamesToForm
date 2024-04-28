@@ -1,0 +1,29 @@
+function teamNamesToForm() {
+  var form = FormApp.openById("1FvAQ8yf6W1_eetuGZWw4ruR15gKTwTaLz2rbCP1T0j4");
+  var namesList = form.getItemById("257701280").asListItem();
+
+  // identify the sheet where the data resides needed to populate the drop-down
+  var ss = SpreadsheetApp.getActive();
+  var names = ss.getSheetByName("TeamList");
+
+  // grab the values in the first column of the sheet - use 2 to skip header row
+  var namesValues = names.getRange(2, 1, names.getMaxRows() - 1, 2).getValues();
+  var teamArray = [];
+
+
+  // convert the array ignoring empty cell
+  // iterate through items in namesValues, removing any row without a team name (empty cell)
+  for (var i = 0; i < namesValues.length; i++)
+    // filter out blank rows, return as teamArray
+    var teamArray = namesValues.filter(function filterNames(name){
+      return name[0] != '';
+    });
+
+  // removes dates before sending to sheet
+  var finalTeams = teamArray.map(function(value, index) {return value[0]; });
+  console.log(finalTeams);
+
+  // populate the drop-down with the array data
+  Logger.log(finalTeams)
+  namesList.setChoiceValues(finalTeams);
+}
